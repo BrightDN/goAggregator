@@ -39,6 +39,11 @@ func main() {
     cmds.Register("reset", commands.HandlerReset)
     cmds.Register("users", commands.HandlerGetUsers)
     cmds.Register("agg", commands.HandlerFetchFeed)
+    cmds.Register("addfeed", middlewareLoggedIn(commands.HandlerAddFeed))
+    cmds.Register("feeds", commands.HandlerGetFeeds)
+    cmds.Register("following", middlewareLoggedIn(commands.HandlerGetAllFollowings))
+    cmds.Register("follow", middlewareLoggedIn(commands.HandlerFollow))
+    cmds.Register("unfollow", middlewareLoggedIn(commands.Handlerunfollow))
 
     if len(os.Args) < 2 {
         fmt.Fprintln(os.Stderr, "not enough arguments")

@@ -12,8 +12,7 @@ func HandlerLogin(s *config.State, cmd Command) error {
     }
     username := cmd.Args[0]
 
-    ctx := context.Background()
-	user, err := s.Db.GetUser(ctx, username)
+	user, err := s.Db.GetUser(context.Background(), username)
     if err != nil { return err }
 
     if err := s.Cfg.SetUser(user.Name); err != nil {

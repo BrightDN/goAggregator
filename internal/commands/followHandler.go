@@ -11,7 +11,7 @@ import (
 
 func HandlerFollow(s *config.State, cmd Command, user database.User) error {
 	if len(cmd.Args) == 0 {
-		return fmt.Errorf("missing a name and link argument")
+		return fmt.Errorf("missing link argument")
 	}
 
 	link := cmd.Args[0]

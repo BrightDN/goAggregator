@@ -50,8 +50,6 @@ func HandlerAddFeed(s *config.State, cmd Command, user database.User) error {
 	}
 
 	fmt.Println("ID:", feed.ID)
-	fmt.Println("CreatedAt:", feed.CreatedAt)
-	fmt.Println("UpdatedAt:", feed.UpdatedAt)
 	fmt.Println("Name:", feed.Name)
 	fmt.Println("URL:", feed.Url)
 	fmt.Println("UserID:", feed.UserID)

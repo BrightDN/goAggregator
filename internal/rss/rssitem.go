@@ -5,5 +5,4 @@ type RSSItem struct {
 	Link 		string `xml:"link"`
 	Description string `xml:"description"`
 	PubDate 	string `xml:"pubDate"`
-
 }

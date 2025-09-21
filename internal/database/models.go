@@ -33,11 +33,11 @@ type Post struct {
 	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Title       sql.NullString
-	Url         sql.NullString
-	Description sql.NullString
-	PublishedAt sql.NullTime
-	FeedID      uuid.NullUUID
+	Title       string
+	Url         string
+	Description string
+	PublishedAt time.Time
+	FeedID      uuid.UUID
 }
 
 type User struct {

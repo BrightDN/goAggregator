@@ -3,6 +3,9 @@ package commands
 import (
 	"github.com/BrightDN/goAggregator/internal/rss"
 	"github.com/BrightDN/goAggregator/internal/config"
+	"github.com/BrightDN/goAggregator/internal/database"
+	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"fmt"
 	"time"
 	"context"
@@ -31,7 +34,6 @@ func HandlerFetchFeed(s *config.State, cmd Command) error {
 func scrapeFeeds(s *config.State) error {
 	ctx := context.Background()
 	feed, err := s.Db.GetNextFeedToFetch(ctx)
-	
 	if err != nil { return err }
 
 	if err := s.Db.MarkFeedFetched(ctx, feed.ID); err != nil { return err }
@@ -40,7 +42,24 @@ func scrapeFeeds(s *config.State) error {
     if err != nil { return err }
 
 	for _, item := range rssfeed.Channel.Item {
-		fmt.Printf("Title: %s\n", orDefault(item.Title, "missing title"))
+
+		pubAt, err := parseAny(item.PubDate)
+		if err != nil { fmt.Errorf("Error formatting date: %w", err) }
+		pubAt = pubAt.UTC()
+
+
+		if err := s.Db.CreatePost(ctx, database.CreatePostParams{
+			ID: uuid.New(),
+			Title: item.Title,
+			Url: item.Link,
+			Description: item.Description,
+			PublishedAt: pubAt,
+			FeedID: feed.ID,
+		}); err != nil {
+    		if pgErr, ok := err.(*pq.Error); ok && pgErr.Code != "23505" { 
+				return err
+			}
+		}
 	}
 
 	fmt.Printf("\nEnd of feedpull for %s\n", rssfeed.Channel.Title)
@@ -53,4 +72,20 @@ func orDefault(s, def string) string {
         return def
     }
     return s
+}
+
+var layouts = []string{
+    time.RFC3339, time.RFC3339Nano,
+    time.RFC1123Z, time.RFC1123,
+    time.RFC822Z, time.RFC822,
+    "Mon, 02 Jan 2006 15:04:05 MST",
+}
+
+func parseAny(ts string) (time.Time, error) {
+    for _, l := range layouts {
+        if t, err := time.Parse(l, ts); err == nil {
+            return t, nil
+        }
+    }
+    return time.Time{}, fmt.Errorf("unrecognized time: %q", ts)
 }

@@ -1,7 +1,8 @@
 # UpdateLog
 
-## Current version
+## Current versions
 v 0.1 -- Initial BETA release
+v 0.2 -- Agg now scrapes concurrently so that all feeds are being checked at the same time at each interval
 
 ## Future updates
 - Adding a help function to help figure out how to use commands and their purpose

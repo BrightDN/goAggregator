@@ -34,7 +34,7 @@ func main() {
     
     cmds := commands.New()
     cmds.RegisterAll()
-
+    
     if len(os.Args) < 2 {
         fmt.Fprintln(os.Stderr, "not enough arguments")
         os.Exit(1)
